@@ -6,7 +6,7 @@ export default function PlayerCard({
 	p1Disabled,
 	p2Disabled,
 	resetGame,
-	handleEdit
+	handleEdit,
 }) {
 	return (
 		<div>
@@ -23,10 +23,11 @@ export default function PlayerCard({
 				id='submit'
 				onClick={handlePlayerTwo}
 				disabled={p2Disabled}
+				className='ms-2'
 			>
 				Player Two
 			</button>
-			<button type='submit' id='submit' onClick={resetGame}>
+			<button type='submit' id='submit' onClick={resetGame} className='ms-2'>
 				Reset
 			</button>
 			<button type='submit' id='submit' onClick={handleEdit}>

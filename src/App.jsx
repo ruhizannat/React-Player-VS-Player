@@ -15,7 +15,7 @@ export default function App() {
 	const [isValid, setIsValid] = useState(false);
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
-	const [p1Turn, setP1Turn] = useState(true);
+	const [p1Turn, setP1Turn] = useState(false);
 	const [p2Turn, setP2Turn] = useState(false);
 	const [p1Disabled, setP1Disabled] = useState(false);
 	const [p2Disabled, setP2Disabled] = useState(false);
@@ -23,6 +23,7 @@ export default function App() {
 	const [play1Name, setPlay1Name] = useState('Player One');
 	const [play2Name, setPlay2Name] = useState('Player Two');
 	const [playing, setPlaying] = useState(false);
+	const [isStart, setIsStart] = useState(false);
 
 	const checkValidation = (inputValue) => {
 		let isError = false;
@@ -56,18 +57,26 @@ export default function App() {
 		// check validation
 		const isError = checkValidation(inputValue);
 		if (isError) return;
-		console.log(inputValue);
 
 		// set winning score
-
 		setWinningScore(inputValue);
+		setIsStart(!isStart);
 	};
+
 	const handleChange = (e) => {
 		const value = +e.target.value;
 
 		setInputValue(value);
 	};
+
 	const handlePlayerOne = () => {
+		if (!isStart) {
+			Swal.fire('please submit your valid input');
+		}
+		if (isStart) {
+			setP1Turn(true);
+		}
+
 		if (p1Turn) {
 			setP1Score(generateRandomNumber);
 			setP1Disabled(true);
@@ -75,10 +84,14 @@ export default function App() {
 			setP1Turn(false);
 			setP2Turn(!p2Turn);
 		}
+
 		winnerMsg();
 	};
 
 	const handlePlayerTwo = () => {
+		if (!isStart) {
+			Swal.fire('please submit your valid input ');
+		}
 		if (p2Turn) {
 			setP2Score(generateRandomNumber);
 			setP2Disabled(true);
@@ -88,19 +101,25 @@ export default function App() {
 		}
 		winnerMsg();
 	};
+
 	const winnerMsg = () => {
 		const isWinnerScoreReached =
 			winningScore === p1Score || winningScore === p2Score;
-		if (isWinnerScoreReached) {
+		if (isWinnerScoreReached && isStart) {
 			setP1Disabled(true);
 			setP2Disabled(true);
 		}
-		if (winningScore === p1Score) {
+
+		const p1 = winningScore === p1Score;
+
+		if (p1 && isStart) {
 			Swal.fire(`WELL DONE,${play1Name}  WON!!`);
 			setPlaying(!playing);
 			audio.play();
 		}
-		if (winningScore === p2Score) {
+		const p2 = winningScore === p2Score;
+
+		if (p2 && isStart) {
 			setPlaying(!playing);
 			audio.play();
 			Swal.fire(`WELL DONE,${play2Name}  WON!!`);
@@ -113,12 +132,13 @@ export default function App() {
 		setIsValid(false);
 		setP1Score(0);
 		setP2Score(0);
-		setP1Turn(true);
+		setP1Turn(false);
 		setP2Turn(false);
 		setP1Disabled(false);
 		setP2Disabled(false);
 		setPlay1Name('Player One');
 		setPlay2Name('Player Two');
+		setIsStart(false);
 	};
 
 	const handleEdit = () => {
@@ -150,7 +170,7 @@ export default function App() {
 					onChange={handleChange}
 					value={inputValue}
 				/>
-				<button type='submit' id='submit'>
+				<button type='submit' id='submit' onClick={() => setIsStart()}>
 					submit
 				</button>
 			</form>
